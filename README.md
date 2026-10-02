@@ -1,6 +1,6 @@
 # Arduino / OSOYOO
 
-OSOYOOのArduino用Building Block DIY Programming Kitを使って、センサーやモーターを組み合わせたロボットカーをC++で制御するためのプロジェクトです。
+OSOYOOのArduino用Building Block DIY Programming Kitを使った、センサーやサーボモーターの個別動作から、赤外線リモコン操作やモーター制御を組み合わせたロボットカーまでを扱うArduinoサンプルプロジェクトです。C++スケッチとmBlockの作例を収録しています。
 
 ## 内容
 
