@@ -23,12 +23,17 @@ bool isRunning   = false;  // 走行フラグ（true: 走行, false: 停止）
 bool isReversing = false;  // 後退フラグ
 int maxSpeed     = 255;    // 最高速度設定（0 ~ 255）
 int currentAngle = 90;     // サーボ角度（0 ~ 180）
+uint8_t obstacleMode = 0;  // 0: 減速、1: 左へ回避、2: 右へ回避
+bool obstacleArmed = true;
 
 // ==========================================
 // 関数プロトタイプ宣言
 // ==========================================
 float getDistance(int trigPin, int echoPin);
 char getIrKey(bool &isIrRepeat);
+void setMotorDirection(bool reverse);
+void runAvoidanceManeuver(bool turnRight);
+void setObstacleMode(uint8_t mode);
 
 // ==========================================
 // セットアップ（初期化）
@@ -70,10 +75,17 @@ void loop() {
   // 3. リモコン入力による動作制御
   if (irKey != -1) {
     switch (irKey) {
-      // --- 数字キー: 走行方向・停止とステアリング位置 ---
       case 0:
-        isRunning = false;
+        setObstacleMode(0);
         break;
+      case '*':
+        setObstacleMode(1);
+        break;
+      case '#':
+        setObstacleMode(2);
+        break;
+
+      // --- 数字キー: 走行方向・停止とステアリング位置 ---
       case 1:
         isRunning = true;
         isReversing = false;
@@ -169,16 +181,24 @@ void loop() {
     }
   }
 
+  if (distance >= 20.0) {
+    obstacleArmed = true;
+  }
+
+  if (isRunning && obstacleMode != 0 && distance < 20.0 && obstacleArmed) {
+    obstacleArmed = false;
+    runAvoidanceManeuver(obstacleMode == 1);
+  }
+
   // 4. 超音波センサーによる自動速度制御
   int targetSpeed = maxSpeed;
-  if (distance < 20.0) {
+  if (obstacleMode == 0 && distance < 20.0) {
     // 20cm未満のときは距離に応じて減速（5cm以下で速度0）
     targetSpeed = map(constrain(distance, 5, 20), 5, 20, 0, maxSpeed);
   }
 
   // 5. モーターとサーボへの出力
-  digitalWrite(PIN_MOTOR_IN1, isReversing ? HIGH : LOW);
-  digitalWrite(PIN_MOTOR_IN2, isReversing ? LOW : HIGH);
+  setMotorDirection(isReversing);
   myServo.write(currentAngle);
   if (isRunning) {
     analogWrite(PIN_MOTOR_PWM, targetSpeed);
@@ -204,6 +224,32 @@ float getDistance(int trigPin, int echoPin) {
   // 30,000マイクロ秒（約5m分）をタイムアウトに設定
   unsigned long duration = pulseIn(echoPin, HIGH, 30000);
   return (float)duration / 58.0;
+}
+
+void setMotorDirection(bool reverse) {
+  digitalWrite(PIN_MOTOR_IN1, reverse ? HIGH : LOW);
+  digitalWrite(PIN_MOTOR_IN2, reverse ? LOW : HIGH);
+}
+
+void runAvoidanceManeuver(bool turnRight) {
+  analogWrite(PIN_MOTOR_PWM, 0);
+
+  setMotorDirection(true);
+  myServo.write(turnRight ? 180 : 0);
+  analogWrite(PIN_MOTOR_PWM, maxSpeed);
+  delay(1000);
+
+  analogWrite(PIN_MOTOR_PWM, 0);
+  setMotorDirection(false);
+  myServo.write(turnRight ? 0 : 180);
+  analogWrite(PIN_MOTOR_PWM, maxSpeed);
+  delay(1000);
+
+  analogWrite(PIN_MOTOR_PWM, 0);
+}
+
+void setObstacleMode(uint8_t mode) {
+  obstacleMode = mode;
 }
 
 // ==========================================
