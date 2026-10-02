@@ -12,19 +12,12 @@ OSOYOOのArduino用Building Block DIY Programming Kitを使った、センサー
 
 ## サンプル
 
-### mBlockプロジェクト
+各例のフォルダーに、その例の説明（`README.md`）、C++スケッチ、mBlockプロジェクト（ある場合）、Arduino CLIの設定をまとめています。
 
-- `1-ultrasonic-servo.mblock` — 超音波センサーとサーボモーターの例
-- `2-swing.mblock` — スイング動作の例
-- `3-car.mblock` — ロボットカーの制御例
-- `4-car-c.mblock` — ロボットカーの制御例
-
-### C++スケッチ
-
-- `sketches/1-ultrasonic-servo/1-ultrasonic-servo.ino` — 超音波センサーとサーボモーターのC++スケッチ
-- `sketches/2-swing/2-swing.ino` — 標準IRremoteライブラリを使うスイング動作のC++スケッチ
-- `sketches/3-car/3-car.ino` — 標準IRremoteライブラリを使うロボットカーのC++スケッチ
-- `sketches/4-car-c/4-car-c.ino` — 標準IRremoteライブラリを使うロボットカーのC++スケッチ
+- [1-ultrasonic-servo](sketches/1-ultrasonic-servo/) — 超音波センサーとサーボモーター
+- [2-swing](sketches/2-swing/) — 赤外線リモコンでサーボをスイング
+- [3-car](sketches/3-car/) — mBlock生成コードを元にしたロボットカー
+- [4-car-c](sketches/4-car-c/) — C++で整理したロボットカー制御
 
 ## Arduino CLI
 
