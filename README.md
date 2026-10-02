@@ -21,22 +21,25 @@ OSOYOOのArduino用Building Block DIY Programming Kitを使って、センサー
 
 ### C++スケッチ
 
-- `1-ultrasonic-servo.cpp` — 超音波センサーとサーボモーターの例
-- `2-swing.cpp` — 標準IRremoteライブラリを使うスイング動作例
-- `3-car.cpp` — 標準IRremoteライブラリを使うロボットカー制御例
-- `4-car-c.cpp` — 標準IRremoteライブラリを使うロボットカー制御例
+- `sketches/1-ultrasonic-servo/1-ultrasonic-servo.ino` — 超音波センサーとサーボモーターのC++スケッチ
+- `sketches/2-swing/2-swing.ino` — 標準IRremoteライブラリを使うスイング動作のC++スケッチ
+- `sketches/3-car/3-car.ino` — 標準IRremoteライブラリを使うロボットカーのC++スケッチ
+- `sketches/4-car-c/4-car-c.ino` — 標準IRremoteライブラリを使うロボットカーのC++スケッチ
 
 ## Arduino CLI
 
-赤外線受信を行うC++スケッチ（`2-swing.cpp`、`3-car.cpp`、`4-car-c.cpp`）では、Arduinoの一般的な`IRremote`ライブラリを使います。mBlockプロジェクトはこのライブラリを使いません。C++スケッチの依存ライブラリは次のコマンドでインストールできます。
+赤外線受信を行うC++スケッチ（`2-swing`、`3-car`、`4-car-c`）では、Arduinoの一般的な`IRremote`ライブラリを使います。mBlockプロジェクトはこのライブラリを使いません。
+
+各スケッチフォルダーの`sketch.yaml`にArduino CLI公式のビルドプロファイルを置き、ボードコアとライブラリのバージョンを管理します。ライブラリ本体はリポジトリに含めず、CLIが不足分を隔離キャッシュに取得します。
 
 ```powershell
-Get-Content arduino-libraries.txt | ForEach-Object { arduino-cli lib install $_ }
+arduino-cli compile sketches/1-ultrasonic-servo
+arduino-cli compile sketches/2-swing
+arduino-cli compile sketches/3-car
+arduino-cli compile sketches/4-car-c
 ```
 
-依存ライブラリ名とバージョンは[`arduino-libraries.txt`](arduino-libraries.txt)に記録しています。ライブラリ本体はリポジトリに含めず、Arduino CLIがユーザー領域にインストールします。
-
-`2-swing.cpp`は受信ピン7、`3-car.cpp`と`4-car-c.cpp`は受信ピン10を使います。リモコンのボタンコードは`getKey()` / `getIrKey()`内で割り当てています。
+`2-swing`は受信ピン7、`3-car`と`4-car-c`は受信ピン10を使います。
 
 ## 参考
 
