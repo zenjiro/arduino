@@ -70,24 +70,54 @@ void loop() {
   // 3. リモコン入力による動作制御
   if (irKey != -1) {
     switch (irKey) {
-      // --- 停止・スピードプリセット ---
-      case 0:
-        isRunning = false;
-        break;
+      // --- 数字キー: 走行方向・停止とステアリング位置 ---
       case 1:
         isRunning = true;
         isReversing = false;
-        maxSpeed  = 96;
+        maxSpeed = 255;
+        currentAngle = 0;
         break;
       case 2:
         isRunning = true;
         isReversing = false;
-        maxSpeed  = 192;
+        maxSpeed = 255;
+        currentAngle = 90;
         break;
       case 3:
         isRunning = true;
         isReversing = false;
         maxSpeed  = 255;
+        currentAngle = 180;
+        break;
+      case 4:
+        isRunning = false;
+        currentAngle = 0;
+        break;
+      case 5:
+        isRunning = false;
+        currentAngle = 90;
+        break;
+      case 6:
+        isRunning = false;
+        currentAngle = 180;
+        break;
+      case 7:
+        isRunning = true;
+        isReversing = true;
+        maxSpeed = 255;
+        currentAngle = 0;
+        break;
+      case 8:
+        isRunning = true;
+        isReversing = true;
+        maxSpeed = 255;
+        currentAngle = 90;
+        break;
+      case 9:
+        isRunning = true;
+        isReversing = true;
+        maxSpeed = 255;
+        currentAngle = 180;
         break;
 
       // --- スピード微調整（▲/▼キー） ---
@@ -129,17 +159,6 @@ void loop() {
         break;
       case 'R':
         currentAngle = constrain(currentAngle + 15, 0, 180);
-        break;
-
-      // --- ステアリング固定位置指定 ---
-      case 4:
-        currentAngle = 0;    // 左いっぱい
-        break;
-      case 5:
-        currentAngle = 90;   // 正面
-        break;
-      case 6:
-        currentAngle = 180;  // 右いっぱい
         break;
 
       default:
