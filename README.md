@@ -21,6 +21,12 @@ OSOYOOのArduino用Building Block DIY Programming Kitを使った、センサー
 
 ## Arduino CLI
 
+Windowsでは、wingetでArduino CLIをインストールできます。
+
+```powershell
+winget install --id ArduinoSA.CLI --exact
+```
+
 赤外線受信を行うスケッチでは、Arduinoの一般的な`IRremote`ライブラリを使います。mBlockプロジェクトはこのライブラリを使いません。
 
 各スケッチフォルダーの`sketch.yaml`にArduino CLI公式のビルドプロファイルを置き、ボードコアとライブラリのバージョンを管理します。ライブラリ本体はリポジトリに含めず、CLIが不足分を隔離キャッシュに取得します。
