@@ -10,18 +10,25 @@ OSOYOOのArduino用Building Block DIY Programming Kitを使って、センサー
 - Arduino向けのC++スケッチ
 - mBlockで作成した動作例（`.mblock`）
 
-### ファイル
+## サンプル
+
+### mBlockプロジェクト
 
 - `1-ultrasonic-servo.mblock` — 超音波センサーとサーボモーターの例
 - `2-swing.mblock` — スイング動作の例
+- `3-car.mblock` — ロボットカーの制御例
+- `4-car-c.mblock` — ロボットカーの制御例
+
+### C++スケッチ
+
+- `1-ultrasonic-servo.cpp` — 超音波センサーとサーボモーターの例
 - `2-swing.cpp` — 標準IRremoteライブラリを使うスイング動作例
-- `3-car.cpp` / `3-car.mblock` — 標準IRremoteライブラリを使うロボットカー制御例
-- `4-car-c.cpp` / `4-car-c.mblock` — 標準IRremoteライブラリを使うロボットカー制御例
-- `vendored/osoyoo_uno.mext` — OSOYOO用mBlock拡張ファイル
+- `3-car.cpp` — 標準IRremoteライブラリを使うロボットカー制御例
+- `4-car-c.cpp` — 標準IRremoteライブラリを使うロボットカー制御例
 
 ## Arduino CLI
 
-C++スケッチの赤外線受信には、Arduinoの一般的な`IRremote`ライブラリを使います。依存ライブラリは次のコマンドでインストールできます。
+赤外線受信を行うC++スケッチ（`2-swing.cpp`、`3-car.cpp`、`4-car-c.cpp`）では、Arduinoの一般的な`IRremote`ライブラリを使います。mBlockプロジェクトはこのライブラリを使いません。C++スケッチの依存ライブラリは次のコマンドでインストールできます。
 
 ```powershell
 Get-Content arduino-libraries.txt | ForEach-Object { arduino-cli lib install $_ }
