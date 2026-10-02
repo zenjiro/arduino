@@ -20,6 +20,7 @@ const int PIN_MOTOR_IN2  = 12;  // モーター方向指定 2
 Servo myServo;
 
 bool isRunning   = false;  // 走行フラグ（true: 走行, false: 停止）
+bool isReversing = false;  // 後退フラグ
 int maxSpeed     = 255;    // 最高速度設定（0 ~ 255）
 int currentAngle = 90;     // サーボ角度（0 ~ 180）
 
@@ -27,7 +28,7 @@ int currentAngle = 90;     // サーボ角度（0 ~ 180）
 // 関数プロトタイプ宣言
 // ==========================================
 float getDistance(int trigPin, int echoPin);
-char getIrKey();
+char getIrKey(bool &isIrRepeat);
 
 // ==========================================
 // セットアップ（初期化）
@@ -39,7 +40,7 @@ void setup() {
   pinMode(PIN_MOTOR_IN1, OUTPUT);
   pinMode(PIN_MOTOR_IN2, OUTPUT);
 
-  // モーターの進行方向設定（前進固定）
+  // モーターの初期方向設定（前進）
   digitalWrite(PIN_MOTOR_IN1, LOW);
   digitalWrite(PIN_MOTOR_IN2, HIGH);
 
@@ -56,7 +57,8 @@ void setup() {
 void loop() {
   // 1. センサー値・入力の取得
   float distance = getDistance(PIN_TRIG, PIN_ECHO);
-  char irKey     = getIrKey();
+  bool isIrRepeat = false;
+  char irKey = getIrKey(isIrRepeat);
 
   // 2. ボタン操作 または リモコン「OK」で走行/停止切り替え
   bool isButtonPressed = (digitalRead(PIN_BUTTON) == LOW);
@@ -74,28 +76,47 @@ void loop() {
         break;
       case 1:
         isRunning = true;
+        isReversing = false;
         maxSpeed  = 96;
         break;
       case 2:
         isRunning = true;
+        isReversing = false;
         maxSpeed  = 192;
         break;
       case 3:
         isRunning = true;
+        isReversing = false;
         maxSpeed  = 255;
         break;
 
       // --- スピード微調整（▲/▼キー） ---
       case 'U':
         if (!isRunning) {
-          maxSpeed = 64;
-          isRunning = true;
+          if (!isIrRepeat) {
+            maxSpeed = 64;
+            isReversing = false;
+            isRunning = true;
+          }
+        } else if (isReversing && maxSpeed <= 64) {
+          isRunning = false;
+          isReversing = false;
+        } else if (isReversing) {
+          maxSpeed = constrain(maxSpeed - 16, 64, 255);
         } else {
           maxSpeed = constrain(maxSpeed + 16, 64, 255);
         }
         break;
       case 'D':
-        if (maxSpeed <= 64) {
+        if (!isRunning) {
+          if (!isIrRepeat) {
+            maxSpeed = 64;
+            isReversing = true;
+            isRunning = true;
+          }
+        } else if (isReversing) {
+          maxSpeed = constrain(maxSpeed + 16, 64, 255);
+        } else if (maxSpeed <= 64) {
           isRunning = false;
         } else {
           maxSpeed = constrain(maxSpeed - 16, 64, 255);
@@ -134,6 +155,8 @@ void loop() {
   }
 
   // 5. モーターとサーボへの出力
+  digitalWrite(PIN_MOTOR_IN1, isReversing ? HIGH : LOW);
+  digitalWrite(PIN_MOTOR_IN2, isReversing ? LOW : HIGH);
   myServo.write(currentAngle);
   if (isRunning) {
     analogWrite(PIN_MOTOR_PWM, targetSpeed);
@@ -164,13 +187,14 @@ float getDistance(int trigPin, int echoPin) {
 // ==========================================
 // 赤外線リモコン読み取り関数
 // ==========================================
-char getIrKey() {
+char getIrKey(bool &isIrRepeat) {
+  isIrRepeat = false;
   if (!IrReceiver.decode()) return -1;
 
-  const bool isRepeat = IrReceiver.decodedIRData.flags & IRDATA_FLAGS_IS_REPEAT;
+  isIrRepeat = IrReceiver.decodedIRData.flags & IRDATA_FLAGS_IS_REPEAT;
   const uint16_t command = IrReceiver.decodedIRData.command;
   IrReceiver.resume();
-  if (isRepeat && command != 0x18 && command != 0x52 &&
+  if (isIrRepeat && command != 0x18 && command != 0x52 &&
       command != 0x08 && command != 0x5A) return -1;
 
   switch (command) {
