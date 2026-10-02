@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include <Servo.h>
-#include <IRremoteExt.h>  // mBlock拡張用の赤外線ライブラリ
+#include <IRremote.hpp>
 
 // ==========================================
 // ピン配置（定数定義）
@@ -48,7 +48,7 @@ void setup() {
   myServo.write(currentAngle);  // 初期角度: 正面（90度）
 
   // 赤外線受信の初期化
-  beginIRremote(PIN_IR_REC);
+  IrReceiver.begin(PIN_IR_REC, DISABLE_LED_FEEDBACK);
 }
 
 // ==========================================
@@ -159,30 +159,31 @@ float getDistance(int trigPin, int echoPin) {
 // 赤外線リモコン読み取り関数
 // ==========================================
 char getIrKey() {
-  handleIRremote();
-  unsigned long rawValue = getPressedIRremote();
+  if (!IrReceiver.decode()) return -1;
 
-  if (rawValue != 0xFFFFFFFF) {
-    switch (rawValue) {
-      case 0xFF38C7: return 'O';  // OK
-      case 0xFF6897: return '*';
-      case 0xFFB04F: return '#';
-      case 0xFF18E7: return 'U';  // Up
-      case 0xFF4AB5: return 'D';  // Down
-      case 0xFF10EF: return 'L';  // Left
-      case 0xFF5AA5: return 'R';  // Right
-      case 0xFFA25D: return 1;
-      case 0xFF629D: return 2;
-      case 0xFFE21D: return 3;
-      case 0xFF22DD: return 4;
-      case 0xFF02FD: return 5;
-      case 0xFFC23D: return 6;
-      case 0xFFE01F: return 7;
-      case 0xFFA857: return 8;
-      case 0xFF906f: return 9;
-      case 0xFF9867: return 0;
-      default: break;
-    }
+  const bool isRepeat = IrReceiver.decodedIRData.flags & IRDATA_FLAGS_IS_REPEAT;
+  const uint16_t command = IrReceiver.decodedIRData.command;
+  IrReceiver.resume();
+  if (isRepeat) return -1;
+
+  switch (command) {
+    case 0x38: return 'O';
+    case 0x68: return '*';
+    case 0xB0: return '#';
+    case 0x18: return 'U';
+    case 0x4A: return 'D';
+    case 0x10: return 'L';
+    case 0x5A: return 'R';
+    case 0xA2: return 1;
+    case 0x62: return 2;
+    case 0xE2: return 3;
+    case 0x22: return 4;
+    case 0x02: return 5;
+    case 0xC2: return 6;
+    case 0xE0: return 7;
+    case 0xA8: return 8;
+    case 0x90: return 9;
+    case 0x98: return 0;
+    default: return -1;
   }
-  return -1;  // 押されていない場合
 }
