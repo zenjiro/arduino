@@ -134,9 +134,9 @@ void loop() {
   }
 
   // 5. モーターとサーボへの出力
+  myServo.write(currentAngle);
   if (isRunning) {
     analogWrite(PIN_MOTOR_PWM, targetSpeed);
-    myServo.write(currentAngle);
   } else {
     analogWrite(PIN_MOTOR_PWM, 0);
   }
