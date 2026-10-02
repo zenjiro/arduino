@@ -21,7 +21,7 @@ OSOYOOのArduino用Building Block DIY Programming Kitを使った、センサー
 
 ## Arduino CLI
 
-赤外線受信を行うC++スケッチ（`2-swing`、`3-car`、`4-car-c`）では、Arduinoの一般的な`IRremote`ライブラリを使います。mBlockプロジェクトはこのライブラリを使いません。
+赤外線受信を行うスケッチでは、Arduinoの一般的な`IRremote`ライブラリを使います。mBlockプロジェクトはこのライブラリを使いません。
 
 各スケッチフォルダーの`sketch.yaml`にArduino CLI公式のビルドプロファイルを置き、ボードコアとライブラリのバージョンを管理します。ライブラリ本体はリポジトリに含めず、CLIが不足分を隔離キャッシュに取得します。
 
@@ -31,8 +31,6 @@ arduino-cli compile sketches/2-swing
 arduino-cli compile sketches/3-car
 arduino-cli compile sketches/4-car-c
 ```
-
-`2-swing`は受信ピン7、`3-car`と`4-car-c`は受信ピン10を使います。
 
 ## IRリモコンのキーマップ
 
