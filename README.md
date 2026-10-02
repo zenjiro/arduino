@@ -32,6 +32,21 @@ arduino-cli compile sketches/3-car
 arduino-cli compile sketches/4-car-c
 ```
 
+接続したボードとポートは次のコマンドで確認できます。
+
+```powershell
+arduino-cli board list
+```
+
+Arduino Unoが`COM3`として表示された場合は、次のように各スケッチを転送します。`COM3`は実際に表示されたポート名に置き換えてください。
+
+```powershell
+arduino-cli upload --profile default -p COM3 sketches/1-ultrasonic-servo
+arduino-cli upload --profile default -p COM3 sketches/2-swing
+arduino-cli upload --profile default -p COM3 sketches/3-car
+arduino-cli upload --profile default -p COM3 sketches/4-car-c
+```
+
 ## IRリモコンのキーマップ
 
 同梱リモコンのキーと、IRremoteの`decodedIRData.command`として受信するコマンド値です。値は16進数です。別のリモコンでは値が異なる場合があります。
