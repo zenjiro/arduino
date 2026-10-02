@@ -71,6 +71,9 @@ void loop() {
   if (irKey != -1) {
     switch (irKey) {
       // --- 数字キー: 走行方向・停止とステアリング位置 ---
+      case 0:
+        isRunning = false;
+        break;
       case 1:
         isRunning = true;
         isReversing = false;
