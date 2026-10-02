@@ -34,6 +34,30 @@ arduino-cli compile sketches/4-car-c
 
 `2-swing`は受信ピン7、`3-car`と`4-car-c`は受信ピン10を使います。
 
+## IRリモコンのキーマップ
+
+`3-car`と`4-car-c`で使用するリモコンを実測したコマンド表です。値はIRremoteの`decodedIRData.command`を16進数で表しています。別のリモコンでは値が異なることがあるため、反応しない場合は受信コードを測定してスケッチのキーマップを更新してください。
+
+| リモコンのボタン | コマンド |
+| --- | --- |
+| `1` | `0x45` |
+| `2` | `0x46` |
+| `3` | `0x47` |
+| `4` | `0x44` |
+| `5` | `0x40` |
+| `6` | `0x43` |
+| `7` | `0x07` |
+| `8` | `0x15` |
+| `9` | `0x09` |
+| `*` | `0x16` |
+| `0` | `0x19` |
+| `#` | `0x0D` |
+| `↑` | `0x18` |
+| `←` | `0x08` |
+| `OK` | `0x1C` |
+| `→` | `0x5A` |
+| `↓` | `0x52` |
+
 ## 参考
 
 [OSOYOO Building Block DIY Programming Kit](https://osoyoo.com/ja/category/building-blocks/osoyoo-building-block-diy-programming-kit/)

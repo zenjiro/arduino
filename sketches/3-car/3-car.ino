@@ -31,26 +31,27 @@ int getKey() {
   const bool isRepeat = IrReceiver.decodedIRData.flags & IRDATA_FLAGS_IS_REPEAT;
   const uint16_t command = IrReceiver.decodedIRData.command;
   IrReceiver.resume();
-  if (isRepeat) return -1;
+  if (isRepeat && command != 0x18 && command != 0x52 &&
+      command != 0x08 && command != 0x5A) return -1;
 
   switch (command) {
-    case 0x38: return 'O';
-    case 0x68: return '*';
-    case 0xB0: return '#';
+    case 0x1C: return 'O';
+    case 0x16: return '*';
+    case 0x0D: return '#';
     case 0x18: return 'U';
-    case 0x4A: return 'D';
-    case 0x10: return 'L';
+    case 0x52: return 'D';
+    case 0x08: return 'L';
     case 0x5A: return 'R';
-    case 0xA2: return 1;
-    case 0x62: return 2;
-    case 0xE2: return 3;
-    case 0x22: return 4;
-    case 0x02: return 5;
-    case 0xC2: return 6;
-    case 0xE0: return 7;
-    case 0xA8: return 8;
-    case 0x90: return 9;
-    case 0x98: return 0;
+    case 0x45: return 1;
+    case 0x46: return 2;
+    case 0x47: return 3;
+    case 0x44: return 4;
+    case 0x40: return 5;
+    case 0x43: return 6;
+    case 0x07: return 7;
+    case 0x15: return 8;
+    case 0x09: return 9;
+    case 0x19: return 0;
     default: return -1;
   }
 }
