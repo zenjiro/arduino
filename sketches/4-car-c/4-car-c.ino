@@ -45,7 +45,6 @@ void setup() {
 
   // サーボモーターの初期化
   myServo.attach(PIN_SERVO);
-  myServo.write(currentAngle);  // 初期角度: 正面（90度）
 
   // 赤外線受信の初期化
   IrReceiver.begin(PIN_IR_REC, DISABLE_LED_FEEDBACK);
@@ -63,7 +62,6 @@ void loop() {
   bool isButtonPressed = (digitalRead(PIN_BUTTON) == LOW);
   if (isButtonPressed || irKey == 'O') {
     isRunning = !isRunning;  // ON/OFFを反転（トグル）
-    maxSpeed  = 255;         // 速度リセット
     delay(300);              // チャタリング防止用デレイ
   }
 
@@ -89,10 +87,19 @@ void loop() {
 
       // --- スピード微調整（▲/▼キー） ---
       case 'U':
-        maxSpeed = constrain(maxSpeed + 16, 64, 255);
+        if (!isRunning) {
+          maxSpeed = 64;
+          isRunning = true;
+        } else {
+          maxSpeed = constrain(maxSpeed + 16, 64, 255);
+        }
         break;
       case 'D':
-        maxSpeed = constrain(maxSpeed - 16, 64, 255);
+        if (maxSpeed <= 64) {
+          isRunning = false;
+        } else {
+          maxSpeed = constrain(maxSpeed - 16, 64, 255);
+        }
         break;
 
       // --- ステアリング微調整（◄/►キー） ---
@@ -132,7 +139,6 @@ void loop() {
     myServo.write(currentAngle);
   } else {
     analogWrite(PIN_MOTOR_PWM, 0);
-    myServo.write(90);  // 停止時は正面に戻す
   }
 
   delay(100);  // ループ周期調整
