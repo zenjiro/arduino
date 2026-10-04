@@ -32,6 +32,7 @@ bool obstacleArmed = true;
 float getDistance(int trigPin, int echoPin);
 char getIrKey(bool &isIrRepeat);
 void setMotorDirection(bool reverse);
+void setSteeringAngle(int angle);
 void runAvoidanceManeuver(bool turnRight);
 void setObstacleMode(uint8_t mode);
 
@@ -192,14 +193,14 @@ void loop() {
 
   // 4. 超音波センサーによる自動速度制御
   int targetSpeed = maxSpeed;
-  if (obstacleMode == 0 && distance < 20.0) {
+  if (obstacleMode == 0 && !isReversing && distance < 20.0) {
     // 20cm未満のときは距離に応じて減速（5cm以下で速度0）
     targetSpeed = map(constrain(distance, 5, 20), 5, 20, 0, maxSpeed);
   }
 
   // 5. モーターとサーボへの出力
   setMotorDirection(isReversing);
-  myServo.write(currentAngle);
+  setSteeringAngle(currentAngle);
   if (isRunning) {
     analogWrite(PIN_MOTOR_PWM, targetSpeed);
   } else {
@@ -231,17 +232,21 @@ void setMotorDirection(bool reverse) {
   digitalWrite(PIN_MOTOR_IN2, reverse ? LOW : HIGH);
 }
 
+void setSteeringAngle(int angle) {
+  myServo.write(180 - angle);
+}
+
 void runAvoidanceManeuver(bool turnRight) {
   analogWrite(PIN_MOTOR_PWM, 0);
 
   setMotorDirection(true);
-  myServo.write(turnRight ? 180 : 0);
+  setSteeringAngle(turnRight ? 180 : 0);
   analogWrite(PIN_MOTOR_PWM, maxSpeed);
   delay(1000);
 
   analogWrite(PIN_MOTOR_PWM, 0);
   setMotorDirection(false);
-  myServo.write(turnRight ? 0 : 180);
+  setSteeringAngle(turnRight ? 0 : 180);
   analogWrite(PIN_MOTOR_PWM, maxSpeed);
   delay(1000);
 
